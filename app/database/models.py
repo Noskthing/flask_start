@@ -1,5 +1,5 @@
 from field import *
-
+from engine import *
 
 class DatabaseModelMetaclass(type):
 	"""docstring for ModelMetaclass"""
@@ -9,9 +9,10 @@ class DatabaseModelMetaclass(type):
 
 		mappings = dict()
 		for k,v in attrs.iteritems():
+			print('Found mapping: %s==>%s' % (k, v))
 			if isinstance(v, Field):
 				mappings[k] = v
-				# print('Found mapping: %s==>%s' % (k, v))
+				
 		for k in mappings.iterkeys():
 			attrs.pop(k)
 
@@ -44,16 +45,16 @@ class DatabaseModel(dict):
 			print k,v
 
 			fields.append(v.name)
-			params.append(str(self[k]))
+			params.append('?')
 			args.append(getattr(self, k,None))
 
-		sql = 'insert into %s (%s) values(%s)' %(self.__table__,','.join(fields),','.join(params))
+		sql = 'insert into %s (%s) values (%s)' %(self.__table__,','.join(fields),','.join(params))
 		print ('SQL: %s' %sql)
-		print args
+		return update(sql,*args)
 
 class User(DatabaseModel):
     
-    __table__ = 'table'
+    __table__ = 'user'
 
     id = IntegerField('id')
     name = StringField('username')
@@ -63,5 +64,8 @@ class User(DatabaseModel):
 
 if __name__ == '__main__':
 	
-	u = User(id=12345, name='Michael', email='test@orm.org', password='my-pwd')
-	u.save()
+	# if not engine:
+	# 	create_databaseengine('root', 'lee', 'lee', '127.0.0.1')
+
+	u = User(id=3, name='lee', email='test@orm.org', password='my-pwd')
+	# print u.save()
