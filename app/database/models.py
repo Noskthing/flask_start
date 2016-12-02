@@ -1,5 +1,5 @@
-from field import *
-from engine import *
+from field import IntegerField,StringField,Field
+import engine as db
 
 import logging
 
@@ -18,7 +18,11 @@ def _gen_sql(table_name,mappings):
 
 		if f.primary_key:
 			pk = f.name
-		spl.append()
+		sql.append('%s %s ,' %(f.name,ddl) if nullable else ' %s %s not null,' %(f.name,ddl))
+	sql.append(' primary key( %s )' %pk)
+	sql.append(');')
+
+	return '\n'.join(sql)
 
 class DatabaseModelMetaclass(type):
 	"""docstring for ModelMetaclass"""
@@ -30,22 +34,22 @@ class DatabaseModelMetaclass(type):
 		primary_key = None
 
 		for k,v in attrs.iteritems():
-			print('Found mapping: %s==>%s' % (k, v))
+			# print('Found mapping: %s==>%s' % (k, v))
 			if isinstance(v, Field):
 				v.name = k
 
-			if v.primary_key:
-				if primary_key:
-					raise TypeError('Cannot define more than 1 primary_key in class %s',name)
-				if v.updateable:
-					logging.warning('Note: change primary_key to non-updateable')
-					v.updateable = False
-				if v.nullable:
-					logging.warning('Note: change primary_key to non-nullable')
+				if v.primary_key:
+					if primary_key:
+						raise TypeError('Cannot define more than 1 primary_key in class %s',name)
+					if v.updateable:
+						logging.warning('Note: change primary_key to non-updateable')
+						v.updateable = False
+					if v.nullable:
+						logging.warning('Note: change primary_key to non-nullable')
 					v.nullable = False
-				primary_key = v.primary_key
+					primary_key = v
 
-			mappings[k] = v
+				mappings[k] = v
 
 		if not primary_key:
 			raise TypeError('primary_key not define in class %s',name)
@@ -58,11 +62,11 @@ class DatabaseModelMetaclass(type):
 
 		attrs['__mappings__'] = mappings
 		attrs['__primary_key__'] = primary_key
-		attrs['__sql__'] = lambda self : _gen_sql(attrs['__table__'],mappings)
+		attrs['__sql__'] = _gen_sql(attrs['__table__'],mappings)
 
-		for trigger in _triggers:
-            if not trigger in attrs:
-                attrs[trigger] = None
+		# for trigger in _triggers:
+  #           if not trigger in attrs:
+  #               attrs[trigger] = None
 
 		return type.__new__(cls,name,bases,attrs)
 
@@ -83,36 +87,69 @@ class DatabaseModel(dict):
 	def __setattr__(self,key,value):
 		self[key] = value
 
-	def save(self):
+	@classmethod
+	def get(cls,pk):
+		d = db.select('select * from %s where %s = ?' %(cls.__table__,cls.__primary_key__.name),pk)
+		return cls(**d) if d else None
+
+	@classmethod
+	def find_all(cls,*args):
+		L = db.select('select * from %s' %cls.__table__)
+		return [cls(**d) for d in L]
+
+	@classmethod
+	def find_by(cls,where,*args):
+		L = db.select('select * from %s where %s' %(cls.__table__,where),*args)
+		return [cls(**d) for d in L]
+
+
+
+	def insert(self):
+
 		fields = []
 		params = []
 		args = []
 
 		for k,v in self.__mappings__.iteritems():
-			print k,v
-
-			fields.append(v.name)
-			params.append('?')
-			args.append(getattr(self, k,None))
+			if v.insertable:
+				fields.append(v.name)
+				params.append('?')
+				args.append(getattr(self, k,v.default))
 
 		sql = 'insert into %s (%s) values (%s)' %(self.__table__,','.join(fields),','.join(params))
-		print ('SQL: %s' %sql)
-		return update(sql,*args)
+		return db.insert(sql, *args)
+
+ 	def update(self):
+ 		
+ 		L = []
+ 		args = []
+
+ 		pk = self.__primary_key__.name
+ 		
+ 		for k,v in self.__mappings__.iteritems():
+ 			if v.updateable:
+ 				L.append('%s=?' % k)
+				args.append(getattr(self, k,v.default))
+		
+        # args.append(getattr(self, pk))
+        sql = 'update %s set %s where %s = ?' %(self.__table__, ','.join(L), pk)
+    	# db.update('update `%s` set %s where %s=?' % (self.__table__, ','.join(L), pk), *args)
 
 class User(DatabaseModel):
     
     __table__ = 'user'
 
-    id = IntegerField('id')
-    name = StringField('username')
-    email = StringField('email')
-    password = StringField('password')
+    id = IntegerField(name = 'id',primary_key = True)
+    username = StringField(name = 'username')
+    email = StringField(name = 'email')
+    password = StringField(name = 'password')
 
 
 if __name__ == '__main__':
 	
-	# if not engine:
-	# 	create_databaseengine('root', 'lee', 'lee', '127.0.0.1')
+	if not db.engine:
+		db.create_databaseengine('root', 'lee', 'lee', '127.0.0.1')
 
-	u = User(id=3, name='lee', email='test@orm.org', password='my-pwd')
-	# print u.save()
+	u = User(id=2, username='mo2mo', email='test@orm.org', password='my-pwd')
+
+	

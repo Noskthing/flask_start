@@ -1,6 +1,23 @@
 import threading
 import functools
 
+#Tools Class
+class Dict(dict):
+   
+    def __init__(self, names=(), values=(), **kw):
+        super(Dict, self).__init__(**kw)
+        for k, v in zip(names, values):
+            self[k] = v
+
+    def __getattr__(self, key):
+        try:
+            return self[key]
+        except KeyError:
+            raise AttributeError(r"'Dict' object has no attribute '%s'" % key)
+
+    def __setattr__(self, key, value):
+        self[key] = value
+
 # about DatabaseEngine
 class _DatabaseEngine(object):
 
@@ -153,6 +170,7 @@ def with_transaction(func):
 	return _wrapper
 
 
+
 # about sql method
 
 #insert method 
@@ -175,7 +193,6 @@ def _update(sql,*args):
 		cursor.execute(sql,args)
 		row = cursor.rowcount
 		if _db_ctx.transactions == 0:
-			
 			_db_ctx.connection.commit()
 		return row
 	finally:
