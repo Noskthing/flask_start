@@ -1,9 +1,19 @@
-<form method="POST">
-	{{ form.hidden_tag()}}
-	{{ form.name.label }} {{ form.name }}
-	{{ form.password.label }} {{ form.password }}
-	{{ form.submit() }}
-</form>
+{% extends "base.html" %}
+
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Flasky - Login{% endblock %}
+
+{% block page_content %}
+<div>
+	<h1>Your email is {{  name }}</h1>
+	<h1>Your password is {{ password }}</h1>
+</div>
+
+<div class="col-md-4">
+    {{ wtf.quick_form(form) }}
+   
+</div>
 
 
-<h1>Username is {{ name }} Password is {{ password }}</h1>
+{% endblock %}

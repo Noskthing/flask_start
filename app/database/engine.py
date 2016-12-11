@@ -229,3 +229,6 @@ def _select(sql, first, *args):
 
 def select(sql, *args):
 	return _select(sql,False,*args)
+
+def select_one(self,*args):
+	return _select(sql,True,*args)

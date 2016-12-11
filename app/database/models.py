@@ -119,21 +119,36 @@ class DatabaseModel(dict):
 		sql = 'insert into %s (%s) values (%s)' %(self.__table__,','.join(fields),','.join(params))
 		return db.insert(sql, *args)
 
- 	def update(self):
- 		
- 		L = []
- 		args = []
-
- 		pk = self.__primary_key__.name
- 		
- 		for k,v in self.__mappings__.iteritems():
- 			if v.updateable:
- 				L.append('%s=?' % k)
-				args.append(getattr(self, k,v.default))
+	def update(self):
 		
-        # args.append(getattr(self, pk))
-        sql = 'update %s set %s where %s = ?' %(self.__table__, ','.join(L), pk)
-    	# db.update('update `%s` set %s where %s=?' % (self.__table__, ','.join(L), pk), *args)
+		pk = self.__primary_key__.name
+
+		L = []
+		args = []
+
+		for k,v in self.__mappings__.iteritems():
+			if v.updateable:
+				L.append(' %s = ?' %k)
+				args.append(getattr(self,k,v.default))
+
+		args.append(getattr(self,pk))
+		sql = 'update %s set %s where %s = ?' %(self.__table__,','.join(L),pk)
+		
+		return db.update(sql,*args)
+
+ 	def delete(self):
+ 		pk = self.__primary_key__.name
+ 		args = (getattr(self,pk))
+
+ 		sql = 'delete from %s where %s = ?' %(self.__table__,pk)
+
+ 		return db.update(sql,args)
+
+ 	def select(self,condition):
+ 		
+ 		sql = 'select * from %s where %s' %(self.__table__,condition)
+
+ 		return db.select(sql)
 
 class User(DatabaseModel):
     
@@ -148,8 +163,9 @@ class User(DatabaseModel):
 if __name__ == '__main__':
 	
 	if not db.engine:
-		db.create_databaseengine('root', 'lee', 'lee', '127.0.0.1')
+		db.create_databaseengine('root', 'momoyao1993', 'lee', '127.0.0.1')
 
-	u = User(id=2, username='mo2mo', email='test@orm.org', password='my-pwd')
-
+	u = User(id=5, username='l', email='aaa', password='my-pwd')
+	# u.insert()
+	print u.select('username = "l" and email = "aaa"')[0]
 	
