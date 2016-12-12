@@ -2,7 +2,7 @@ from flask import render_template,session,flash,redirect,url_for
 from .forms import LoginForm,RegistrationForm
 from . import auth
 from werkzeug.security import generate_password_hash,check_password_hash
-
+from ..aaa import send_email
 @auth.route('/login',methods=['GET','POST'])
 def login():
 	form = LoginForm()
@@ -23,14 +23,14 @@ def login():
 def register():
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = User(email=form.email.data,
-                    username=form.username.data,
-                    password=form.password.data)
-        db.session.add(user)
-        db.session.commit()
-        token = user.generate_confirmation_token()
-        # send_email(user.email, 'Confirm Your Account',
-        #            'auth/email/confirm', user=user, token=token)
-        # flash('A confirmation email has been sent to you by email.')
+        # user = User(email=form.email.data,
+        #             username=form.username.data,
+        #             password=form.password.data)
+        # db.session.add(user)
+        # db.session.commit()
+        # token = user.generate_confirmation_token()
+        send_email('295060015@qq.com', 'Confirm Your Account',
+                   'auth/email/confirm', user=None, token='token')
+        flash('A confirmation email has been sent to you by email.')
         return redirect(url_for('auth.login'))
     return render_template('auth/register.html', form=form)
