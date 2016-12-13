@@ -7,16 +7,25 @@ class Config(object):
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     SECRET_KEY = 'hard to guess string'
-    SQLALCHEMY_DATABASE_URI = 'mysql://root:momoyao1993@localhost/user'
-    
+    SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root:momoyao1993@127.0.0.1/lee'
+    SQLALCHEMY_COMMIT_ON_TEARDOWN = True
+    MAIL_SERVER = 'smtp.qq.com'
+    MAIL_PORT = 465
+    MAIL_USE_TLS = False
+    MAIL_USE_SSL = True
+    MAIL_USERNAME = '295060015@qq.com'
+    MAIL_PASSWORD = 'wbhglevkmfxtbhhh'
+    FLASKY_MAIL_SUBJECT_PREFIX = '[Flasky]'
+    FLASKY_MAIL_SENDER = 'Flasky Admin <295060015@qq.com>'
+    FLASKY_ADMIN = 'FLASKY_ADMIN'
+
     @staticmethod
     def init_app(app):
 		pass
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
-        'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
+    SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root:lee@localhost/lee'
 
 
 class TestingConfig(Config):

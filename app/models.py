@@ -52,7 +52,10 @@ class User(UserMixin, db.Model):
             return False
         self.confirmed = True
         db.session.add(self)
+        db.session.commit()
+        
         return True
 
     def __repr__(self):
         return '<User %r>' % self.username
+
