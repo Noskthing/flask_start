@@ -42,20 +42,40 @@ class User(UserMixin, db.Model):
         s = Serializer(current_app.config['SECRET_KEY'], expiration)
         return s.dumps({'confirm': self.id})
 
-    def confirm(self, token):
+    def generate_change_email_token(self, expiration=3600):
+        s = Serializer(current_app.config['SECRET_KEY'], expiration)
+        return s.dumps({'email': self.email})
+
+
+    @classmethod
+    def check_confirm(cls,token):
+
         s = Serializer(current_app.config['SECRET_KEY'])
         try:
             data = s.loads(token)
         except:
-            return False
-        if data.get('confirm') != self.id:
-            return False
-        self.confirmed = True
-        db.session.add(self)
-        db.session.commit()
-        
-        return True
+            return 'The link is invaild!'
+
+        currentUser = User.query.filter_by(id=data.get('confirm')).first()
+
+        if currentUser:
+
+            if currentUser.confirmed:
+                return 'The confirmation link has expired !' 
+
+            currentUser.confirmed = True
+            db.session.add(currentUser)
+            db.session.commit()
+
+            return 'Dear %s,You have confirmed your account. Thanks!' %currentUser.username
+
+        else:
+
+            return 'The confirmation link is invalid!'
 
     def __repr__(self):
         return '<User %r>' % self.username
 
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
