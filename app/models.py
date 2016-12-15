@@ -42,36 +42,65 @@ class User(UserMixin, db.Model):
         s = Serializer(current_app.config['SECRET_KEY'], expiration)
         return s.dumps({'confirm': self.id})
 
-    def generate_change_email_token(self, expiration=3600):
-        s = Serializer(current_app.config['SECRET_KEY'], expiration)
-        return s.dumps({'email': self.email})
-
-
     @classmethod
     def check_confirm(cls,token):
-
         s = Serializer(current_app.config['SECRET_KEY'])
         try:
             data = s.loads(token)
         except:
             return 'The link is invaild!'
-
         currentUser = User.query.filter_by(id=data.get('confirm')).first()
-
         if currentUser:
-
             if currentUser.confirmed:
                 return 'The confirmation link has expired !' 
-
             currentUser.confirmed = True
             db.session.add(currentUser)
             db.session.commit()
-
             return 'Dear %s,You have confirmed your account. Thanks!' %currentUser.username
-
         else:
-
             return 'The confirmation link is invalid!'
+
+    def generate_email_change_token(self, new_email, expiration=3600):
+        s = Serializer(current_app.config['SECRET_KEY'], expiration)
+        return s.dumps({'change_email': self.id, 'new_email': new_email})
+
+    @classmethod
+    def check_change_email(cls, token):
+        s = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except:
+            return 'The link is invaild!'
+        currentUser = User.query.filter_by(id=data.get('confirm')).first()
+        if currentUser:
+            new_email = data.get('new_email')
+            if new_email is None:
+                return 'New email is None!'
+            if self.query.filter_by(email=new_email).first() is not None:
+                return 'New email is already exist!'
+            currentUser.email = new_email
+            db.session.add(currentUser)
+            db.session.commit()
+            return 'Dear %s,You have changed your email!' %currentUser.username
+        else:
+            return 'The confirmation link is invalid!'
+        
+    def generate_reset_token(self, expiration=3600):
+        s = Serializer(current_app.config['SECRET_KEY'], expiration)
+        return s.dumps({'reset': self.id})
+
+    def reset_password(self, token, new_password):
+        s = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except:
+            return False
+        if data.get('reset') != self.id:
+            return False
+        self.password = new_password
+        db.session.add(self)
+        db.session.commit()
+        return True
 
     def __repr__(self):
         return '<User %r>' % self.username
