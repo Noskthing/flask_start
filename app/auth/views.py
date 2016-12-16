@@ -8,8 +8,18 @@ PasswordResetForm,PasswordResetRequestForm
 from . import auth
 
 from ..auth_email import send_email
-from ..models import User
+from ..models import User,Role
 from .. import db
+
+@auth.before_app_request
+def before_request():
+    if current_user.is_authenticated():
+        current_user.ping()
+        print(request.endpoint)
+        # if not current_user.confirmed \
+        #         and request.endpoint[:5] != 'auth.' \
+        #         and request.endpoint != 'static':
+        #     return redirect(url_for('auth.unconfirmed'))
 
 
 @auth.route('/login',methods=['GET','POST'])
