@@ -2,7 +2,7 @@ from flask import render_template,session,flash,redirect,url_for,request
 from werkzeug.security import generate_password_hash,check_password_hash
 from flask_login import login_user, logout_user, login_required, \
     current_user
-    
+from datetime import datetime  
 from .forms import LoginForm,RegistrationForm,ChangeEmailForm,ChangePasswordForm, \
 PasswordResetForm,PasswordResetRequestForm
 from . import auth
@@ -13,7 +13,7 @@ from .. import db
 
 @auth.before_app_request
 def before_request():
-    if current_user.is_authenticated():
+    if current_user.is_authenticated:
         current_user.ping()
         print(request.endpoint)
         # if not current_user.confirmed \
@@ -49,8 +49,8 @@ def register():
 
         user = User(email=form.email.data,
                     username=form.username.data,
-                    password=form.password.data)
-    
+                    password=form.password.data,
+                    member_since = datetime.utcnow())
         db.session.add(user)
         db.session.commit()
 

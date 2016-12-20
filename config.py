@@ -16,7 +16,7 @@ class Config(object):
     MAIL_USERNAME = '295060015@qq.com'
     MAIL_PASSWORD = 'wbhglevkmfxtbhhh'
     FLASKY_MAIL_SUBJECT_PREFIX = '[Flasky]'
-    FLASKY_MAIL_SENDER = 'Flasky Admin <295060015@qq.com>'
+    FLASKY_MAIL_SENDER = '295060015@qq.com'
     FLASKY_ADMIN = 'FLASKY_ADMIN'
 
     @staticmethod
