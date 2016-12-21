@@ -1,17 +1,28 @@
+#!/usr/bin/env python  
 # -*- coding: utf-8 -*-  
 
 from flask import render_template,redirect,url_for,session,flash,redirect
 from flask_login import login_required, current_user
 
 from . import main
-from .forms import NameForm,EditProfileForm
-from ..models import Role,User
+from .forms import NameForm,EditProfileForm,PostForm
+from ..models import Role,User,Permission,Post
 from ..decorators import admin_required
 from .. import db
 
-@main.route('/')
+import chardet
+@main.route('/', methods=['GET', 'POST'])
 def index():
-	return render_template('main/index.html')
+    form = PostForm()
+    if current_user.can(Permission.WRITE_ARTICLES) and form.validate_on_submit():
+        string = str(form.body.data)
+        post = Post(body=u'我',
+                    author=current_user._get_current_object())
+        db.session.add(post)
+        db.session.commit()
+        return redirect(url_for('.index'))
+    posts = Post.query.order_by(Post.timestamp.desc()).all()
+    return render_template('main/index.html', form=form, posts=posts,Permission = Permission)
 
 @main.route('/user/<username>')
 def user(username):
