@@ -55,7 +55,7 @@ def register():
         db.session.commit()
 
         token = user.generate_confirmation_token()
-        send_email('295060015@qq.com', 'Confirm Your Account',
+        send_email(form.username.data, 'Confirm Your Account',
                    'auth/email/confirm', user=user, token=token)
 
         flash('A confirmation email has been sent to you by email.')
