@@ -28,5 +28,4 @@ def apprun():
 
 
 if __name__ == '__main__':
-	make_context = make_shell_context()
 	app.run()
