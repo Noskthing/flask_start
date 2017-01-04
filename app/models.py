@@ -2,7 +2,7 @@ from . import db, login_manager
 from flask_login import UserMixin,AnonymousUserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
-from flask import current_app, request
+from flask import current_app, request ,url_for
 from datetime import datetime
 from markdown import markdown
 import bleach
@@ -164,13 +164,12 @@ class User(UserMixin, db.Model):
 
     def to_json(self):
         json_user = {
-            'url': url_for('api.get_post', id=self.id, _external=True),
+            'url': url_for('api.test'),
             'username': self.username,
             'member_since': self.member_since,
             'last_seen': self.last_seen,
-            'posts': url_for('api.get_user_posts', id=self.id, _external=True),
-            'followed_posts': url_for('api.get_user_followed_posts',
-                                      id=self.id, _external=True),
+            'posts': url_for('api.test'),
+            'followed_posts': url_for('api.test'),
             'post_count': self.posts.count()
         }
         return json_user

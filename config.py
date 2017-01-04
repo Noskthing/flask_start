@@ -7,7 +7,7 @@ class Config(object):
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     SECRET_KEY = 'hard to guess string'
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+    SQLALCHEMY_DATABASE_URI = 'mysql://root:lee@localhost/lee'
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     MAIL_SERVER = 'smtp.qq.com'
     MAIL_PORT = 465
@@ -26,7 +26,7 @@ class Config(object):
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+    SQLALCHEMY_DATABASE_URI = 'mysql://root:lee@localhost/lee'
 
 
 class TestingConfig(Config):
@@ -71,6 +71,7 @@ class HerokuConfig(ProductionConfig):
     def init_app(cls, app):
         ProductionConfig.init_app(app)
 
+        SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
         # # handle proxy server headers
         # from werkzeug.contrib.fixers import ProxyFix
         # app.wsgi_app = ProxyFix(app.wsgi_app)

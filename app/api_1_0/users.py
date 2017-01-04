@@ -1,4 +1,4 @@
-from flask import jsonify, request, current_app, url_for
+from flask import jsonify, request, current_app, url_for ,render_template
 from . import api
 from ..models import User, Post
 
@@ -9,9 +9,9 @@ def get_user(id):
     return jsonify(user.to_json())
 
 
-@api.route('/test',method = ['GET','POST'])
+@api.route('/test',methods = ['GET','POST'])
 def test():
-	return jsonify({'success': 'test', 'message': request.values()})
+	return jsonify({'success': 'test', 'message': request.values})
 
 
 @api.route('/post/<int:id>')

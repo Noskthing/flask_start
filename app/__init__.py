@@ -33,10 +33,10 @@ def create_app(config_name):
     pagedown.init_app(app)
 
     db.init_app(app)
-    with app.app_context():
-        # Extensions like Flask-SQLAlchemy now know what the "current" app
-        # is while within this block. Therefore, you can now run........
-        db.create_all()
+    # with app.app_context():
+    #     # Extensions like Flask-SQLAlchemy now know what the "current" app
+    #     # is while within this block. Therefore, you can now run........
+    #     db.create_all()
         
     login_manager.init_app(app)
 
@@ -49,6 +49,6 @@ def create_app(config_name):
     app.register_blueprint(auth_blueprint,url_prefix = '/auth')
 
     from .api_1_0 import api as api_1_0_blueprint
-    app.register_blueprint(api_1_0_blueprint, url_prefix='/api')
+    app.register_blueprint(api_1_0_blueprint, url_prefix='/api/v1.0')
 
     return app
