@@ -12,3 +12,9 @@ def get_user(id):
 @api.route('/test',method = ['GET','POST'])
 def test():
 	return jsonify({'success': 'test', 'message': request.values()})
+
+
+@api.route('/post/<int:id>')
+def post(id):
+    post = Post.query.get_or_404(id)
+    return render_template('main/post.html', posts=[post])
