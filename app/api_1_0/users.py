@@ -7,3 +7,8 @@ from ..models import User, Post
 def get_user(id):
     user = User.query.get_or_404(id)
     return jsonify(user.to_json())
+
+
+@api.route('/test',method = ['GET','POST'])
+def test():
+	return jsonify({'success': 'test', 'message': request.values()})
