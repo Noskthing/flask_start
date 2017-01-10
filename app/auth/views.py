@@ -1,7 +1,7 @@
-from flask import render_template,session,flash,redirect,url_for,request
+from flask import render_template,session,flash,redirect,url_for,request,current_app
 from werkzeug.security import generate_password_hash,check_password_hash
 from flask_login import login_user, logout_user, login_required, \
-    current_user,current_app
+    current_user
 from datetime import datetime  
 from .forms import LoginForm,RegistrationForm,ChangeEmailForm,ChangePasswordForm, \
 PasswordResetForm,PasswordResetRequestForm
