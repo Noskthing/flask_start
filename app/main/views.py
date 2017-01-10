@@ -49,14 +49,6 @@ def user(username):
                            pagination=pagination ,Permission=Permission)
 
 
-
-
-
-
-
-
-
-
 @main.route('/edit-profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
@@ -105,15 +97,6 @@ def edit_profile_admin(id):
     return render_template('main/edit_profile.html', form=form, user=user)
 
 
-
-
-
-
-
-
-
-
-
 @main.route('/post/<int:id>', methods=['GET', 'POST'])
 def post(id):
     post = Post.query.get_or_404(id)
@@ -153,15 +136,6 @@ def edit_post(id):
         return redirect(url_for('main.post',id = post.id))
     form.body.data = post.body
     return render_template('main/edit_post.html',form = form)
-
-
-
-
-
-
-
-
-
 
 
 @main.route('/follow/<username>')
@@ -229,8 +203,6 @@ def followed_by(username):
                            endpoint='.followed_by', pagination=pagination,
                            follows=follows)
 
-
-
 @main.route('/all')
 @login_required
 def show_all():
@@ -267,7 +239,7 @@ def moderate_enable(id):
     comment = Comment.query.get_or_404(id)
     comment.disabled = False
     db.session.add(comment)
-    db.session.comment()
+    db.session.commit()
     return redirect(url_for('.moderate',
                             page=request.args.get('page', 1, type=int)))
 
@@ -279,6 +251,6 @@ def moderate_disable(id):
     comment = Comment.query.get_or_404(id)
     comment.disabled = True
     db.session.add(comment)
-    db.session.comment()
+    db.session.commit()
     return redirect(url_for('.moderate',
                             page=request.args.get('page', 1, type=int)))
