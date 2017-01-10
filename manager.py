@@ -16,13 +16,10 @@ def make_shell_context():
 manager.add_command("shell", Shell(make_context=make_shell_context))
 # manager.add_command('db', MigrateCommand)
 
-
-@manager.command
-def apprun():
-	app.run()
-
-
+@app.context_processor
+def inject_var():
+    return dict(app=app, db=db, User=User, Role=Role, Permission=Permission,
+                Post=Post)
 
 if __name__ == '__main__':
-	
-	app.run()
+	manager.run()
