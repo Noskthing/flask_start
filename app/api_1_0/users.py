@@ -11,7 +11,11 @@ def get_user(id):
 
 @api.route('/test',methods = ['GET','POST'])
 def test():
-	return jsonify({'success': 'test', 'message': request.values})
+	message = ''
+	if request.accept_mimetypes.accept_json and \
+            not request.accept_mimetypes.accept_html:
+        message = 'html'
+	return jsonify({'success': 'test', 'message': message})
 
 
 @api.route('/post/<int:id>')
