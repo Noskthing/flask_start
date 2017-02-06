@@ -14,7 +14,7 @@ def test():
 	message = ''
 	if request.accept_mimetypes.accept_json and \
             not request.accept_mimetypes.accept_html:
-        message = 'html'
+		message = 'html'
 	return jsonify({'success': 'test', 'message': message})
 
 
