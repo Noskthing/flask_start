@@ -20,7 +20,12 @@ def forbidden(message):
     response.status_code = 403
     return response
 
+@main.app_errorhandler(404)
+def not_found(e):
+    response = jsonify({'error': 'not found user'})
+    response.status_code = 404
+    return response
 
-@api.errorhandler(ValidationError)
-def validation_error(e):
-    return bad_request(e.args[0])
+# @api.errorhandler(ValidationError)
+# def validation_error(e):
+#     return bad_request(e.args[0])
