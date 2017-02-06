@@ -20,7 +20,7 @@ def forbidden(message):
     response.status_code = 403
     return response
 
-@api.app_errorhandler(404)
+@api.errorhandler(404)
 def not_found(e):
     response = jsonify({'error': 'not found user'})
     response.status_code = 404
