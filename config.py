@@ -13,10 +13,10 @@ class Config(object):
     MAIL_PORT = 465
     MAIL_USE_TLS = False
     MAIL_USE_SSL = True
-    MAIL_USERNAME = '295060015@qq.com'
-    MAIL_PASSWORD = 'wbhglevkmfxtbhhh'
+    MAIL_USERNAME = 'xxxxxxx@qq.com'
+    MAIL_PASSWORD = 'password'
     FLASKY_MAIL_SUBJECT_PREFIX = '[Flasky]'
-    FLASKY_MAIL_SENDER = '295060015@qq.com'
+    FLASKY_MAIL_SENDER = 'xxxxxxx@qq.com'
     FLASKY_ADMIN = 'FLASKY_ADMIN'
     FLASKY_POSTS_PER_PAGE = 10
     FLASKY_FOLLOWERS_PER_PAGE = 50
