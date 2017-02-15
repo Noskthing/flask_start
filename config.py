@@ -75,16 +75,16 @@ class HerokuConfig(ProductionConfig):
         ProductionConfig.init_app(app)
 
         SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
-        # # handle proxy server headers
-        # from werkzeug.contrib.fixers import ProxyFix
-        # app.wsgi_app = ProxyFix(app.wsgi_app)
+        # handle proxy server headers
+        from werkzeug.contrib.fixers import ProxyFix
+        app.wsgi_app = ProxyFix(app.wsgi_app)
 
-        # # log to stderr
-        # import logging
-        # from logging import StreamHandler
-        # file_handler = StreamHandler()
-        # file_handler.setLevel(logging.WARNING)
-        # app.logger.addHandler(file_handler)
+        # log to stderr
+        import logging
+        from logging import StreamHandler
+        file_handler = StreamHandler()
+        file_handler.setLevel(logging.WARNING)
+        app.logger.addHandler(file_handler)
 
 
 class UnixConfig(ProductionConfig):
