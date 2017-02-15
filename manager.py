@@ -14,7 +14,7 @@ def make_shell_context():
     return dict(app=app, db=db, User=User, Role=Role, Permission=Permission,
                 Post=Post)
 manager.add_command("shell", Shell(make_context=make_shell_context))
-# manager.add_command('db', MigrateCommand)
+manager.add_command('db', MigrateCommand)
 
 @app.context_processor
 def inject_var():
@@ -22,4 +22,4 @@ def inject_var():
                 Post=Post)
 
 if __name__ == '__main__':
-	app.run()
+	manager.run()
