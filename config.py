@@ -75,6 +75,8 @@ class HerokuConfig(ProductionConfig):
         ProductionConfig.init_app(app)
 
         SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+        MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
+        MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
         # handle proxy server headers
         from werkzeug.contrib.fixers import ProxyFix
         app.wsgi_app = ProxyFix(app.wsgi_app)
