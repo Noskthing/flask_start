@@ -10,7 +10,7 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = 'mysql://root:lee@localhost/lee'
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     MAIL_SERVER = 'smtp.qq.com'
-    MAIL_PORT = 465
+    MAIL_PORT = 25
     MAIL_USE_TLS = False
     MAIL_USE_SSL = True
     MAIL_USERNAME = '295060015@qq.com'
